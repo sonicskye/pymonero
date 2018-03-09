@@ -83,7 +83,7 @@ class myThread (threading.Thread):
 def saveAllToDB(threadSize):
     #fixing things
     lastBlock = dbGetLastTxHeight()
-    firstBlock = lastBlock - 200
+    firstBlock = lastBlock - 500
     #lastBlock = dbGetFinalTxHeight()
     print "First block: ", str(firstBlock)
     print "Last BLock: ", str(lastBlock)
@@ -108,7 +108,7 @@ def saveAllToDB(threadSize):
             t.join()
         
 def saveAHeaderToDB(height):
-    s = "INSERT INTO voutkey_usagecount(vout_key, usagecount) SELECT m.vout_key, count(m.vout_key) AS usagecountnew FROM tx_vin_mixin m WHERE m.header_height = %s GROUP BY m.vout_key ON DUPLICATE KEY UPDATE usagecount = VALUES(usagecount)"
+    s = "INSERT INTO kimage_ringsize(k_image, ringsize) SELECT m.k_image, count(m.vout_key) AS ctx FROM tx_vin_mixin m WHERE m.header_height = %s GROUP BY m.k_image ON DUPLICATE KEY UPDATE ringsize = VALUES(ctx)"
     s = s % (height)
     cnx = mysql.connector.connect(**mysqlconfig)
     cur = cnx.cursor()

@@ -2,7 +2,9 @@ import pymonero
 import sys
 
 # Initialize daemon (optional unless using different parameters)
-daemon = pymonero.connections.Daemon()
+#daemon = pymonero.connections.Daemon()
+#daemon = pymonero.connections.Daemon('http://node.moneroworld.com','18089')
+daemon = pymonero.connections.Daemon('http://node.xmrbackb.one','18081')
 bitmonero = pymonero.Bitmonero(daemon)
 
 

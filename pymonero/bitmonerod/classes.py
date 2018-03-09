@@ -61,12 +61,14 @@ class BlockInfo:
         self.header = BlockHeader(header)
         self.details = BlockDetails(info)
         
+        
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)
 
 # BlockHeader :: Class used to parse block header, ex: in class "BlockInfo"
 class BlockHeader:
     def __init__(self, header):
+        #print "BlockHeader"
         self.nonce         = header["nonce"]
         self.reward        = header["reward"]
         self.hash          = header["hash"]
@@ -99,15 +101,28 @@ class BlockDetails:
 # MinerTx  :: Class used to parse "miner_tx" info, ex: in class "BlockInfo"
 class MinerTx:
     def __init__(self, miner_tx_info): 
-        self.signatures  = miner_tx_info["signatures"]
-        self.extra       = miner_tx_info["extra"]
-        self.unlock_time = miner_tx_info["unlock_time"]
-        self.vin         = []
-        for i in range(0,len(miner_tx_info["vin"])):
-            self.vin.append(Vin(miner_tx_info["vin"][i]))
-        self.vout        = []
-        for i in range(0,len(miner_tx_info["vout"])):
-            self.vout.append(Vout(miner_tx_info["vout"][i]))
+        #before ringct is used
+        if "rct_signatures" not in miner_tx_info:
+            self.signatures  = miner_tx_info["signatures"]
+            self.extra       = miner_tx_info["extra"]
+            self.unlock_time = miner_tx_info["unlock_time"]
+            self.vin         = []
+            for i in range(0,len(miner_tx_info["vin"])):
+                self.vin.append(Vin(miner_tx_info["vin"][i]))
+            self.vout        = []
+            for i in range(0,len(miner_tx_info["vout"])):
+                self.vout.append(Vout(miner_tx_info["vout"][i]))
+        #handle ringct
+        else:
+            self.signatures  = miner_tx_info["rct_signatures"]
+            self.extra       = miner_tx_info["extra"]
+            self.unlock_time = miner_tx_info["unlock_time"]
+            self.vin         = []
+            for i in range(0,len(miner_tx_info["vin"])):
+                self.vin.append(Vin(miner_tx_info["vin"][i]))
+            self.vout        = []
+            for i in range(0,len(miner_tx_info["vout"])):
+                self.vout.append(Vout(miner_tx_info["vout"][i]))
         
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)
@@ -180,19 +195,36 @@ class Transactions:
 # Transaction :: Class used to parse individual transactions, ex: in class "Transactions"
 class Transaction:
     def __init__(self, hash, tx_info, block=None):
-        self.hash        = hash
-        self.version     = tx_info["version"]
-        self.signatures  = tx_info["signatures"]
-        self.extra       = tx_info["extra"]
-        self.unlock_time = tx_info["unlock_time"]
-        self.vin         = []
-        for i in range(0,len(tx_info["vin"])):
-            self.vin.append(Vin(tx_info["vin"][i]))
-        self.vout        = []
-        for i in range(0,len(tx_info["vout"])):
-            self.vout.append(Vout(tx_info["vout"][i]))
-        if block is not None:
-            self.block = block
+        #before ringct is used
+        if "rctsig_prunable" not in tx_info:
+            self.hash        = hash
+            self.version     = tx_info["version"]
+            self.signatures  = tx_info["signatures"]
+            self.extra       = tx_info["extra"]
+            self.unlock_time = tx_info["unlock_time"]
+            self.vin         = []
+            for i in range(0,len(tx_info["vin"])):
+                self.vin.append(Vin(tx_info["vin"][i]))
+            self.vout        = []
+            for i in range(0,len(tx_info["vout"])):
+                self.vout.append(Vout(tx_info["vout"][i]))
+            if block is not None:
+                self.block = block
+        #ringct transaction
+        else:
+            self.hash        = hash
+            self.version     = tx_info["version"]
+            self.signatures  = tx_info["rctsig_prunable"]
+            self.extra       = tx_info["extra"]
+            self.unlock_time = tx_info["unlock_time"]
+            self.vin         = []
+            for i in range(0,len(tx_info["vin"])):
+                self.vin.append(Vin(tx_info["vin"][i]))
+            self.vout        = []
+            for i in range(0,len(tx_info["vout"])):
+                self.vout.append(Vout(tx_info["vout"][i]))
+            if block is not None:
+                self.block = block
         
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)

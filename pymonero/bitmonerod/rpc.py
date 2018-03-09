@@ -177,7 +177,7 @@ def _getBlockAndParse(daemon,rpc_input):
         else:
             error = utils.ErrorMessage(output["error"]["message"])
             return error
-    
+        
         # Gather block header:
         block_header = result["block_header"]
         
@@ -194,12 +194,12 @@ def _getBlockAndParse(daemon,rpc_input):
         
     except:
         error = utils.ErrorMessage("Error parsing result as class BlockInfo.")
+        
         return error
 
 def getBlockByHeight(daemon,block_height):
     ''' getBlockByHeight(block_height) :: Function that returns "getblock" rpc call info
         with "height" param. '''
-    
     if isinstance(block_height, int):
         # Define bitmonerod rpc method input
         rpc_input = { "method": "getblock", "params": { "height": block_height } }
@@ -208,7 +208,9 @@ def getBlockByHeight(daemon,block_height):
         blockInfo = _getBlockAndParse(daemon,rpc_input)
         
         # Return block info
+        
         return blockInfo
+        
     else:
         error = utils.ErrorMessage('Block height' + str(block_height) + 'is invalid: not an integer.')
         return error

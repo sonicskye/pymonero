@@ -26,7 +26,7 @@ def SingleQuotedStr(s):
 def dbGetLastBlock():
     cnx = mysql.connector.connect(**mysqlconfig)
     cur = cnx.cursor()
-    s = "SELECT MAX(header_height) FROM tx_vout WHERE vout_offset > -1"
+    s = "SELECT MAX(header_height) FROM tx_vout WHERE vout_num > -1"
     cur.execute(s)
     rows = cur.fetchall()
     for row in rows:
@@ -36,14 +36,14 @@ def dbGetLastBlock():
 def dbGetMaxBlock():
     cnx = mysql.connector.connect(**mysqlconfig)
     cur = cnx.cursor()
-    s = "SELECT MAX(header_height) FROM tx_vout WHERE vout_offset = -1"
+    s = "SELECT MAX(header_height) FROM tx_vout WHERE vout_num = -1"
     cur.execute(s)
     rows = cur.fetchall()
     for row in rows:
         height = row[0]
     return height
             
-def dbUpdateBlockVoutOffsets(height):
+def dbUpdateBlockVoutNum(height):
     #take the current time
     startTime = datetime.datetime.now()
     

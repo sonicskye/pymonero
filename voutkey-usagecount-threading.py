@@ -80,7 +80,7 @@ class myThread (threading.Thread):
 def saveAllToDB(threadSize):
     #fixing things
     lastBlock = dbGetLastTxHeight()
-    firstBlock = lastBlock - 200
+    firstBlock = lastBlock - 500
     #lastBlock = dbGetFinalTxHeight()
     print "First block: ", str(firstBlock)
     print "Last BLock: ", str(lastBlock)
